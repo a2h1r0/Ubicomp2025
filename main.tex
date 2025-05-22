@@ -126,7 +126,7 @@
 %%
 %% The "title" command has an optional parameter,
 %% allowing the author to define a "short title" to be used in page headers.
-\title{Move PPG}
+\title{Homing Sensor: Implementation of PPG sensor mounting position adjuster device}
 
 %%
 %% The "author" command and its associated commands are used to define
@@ -162,13 +162,8 @@
 %% The abstract is a short summary of the work to be presented in the
 %% article.
 \begin{abstract}
-% ウェアラブルデバイスから取得されるバイタルデータのうち、脈波データはPPGセンサを用いて取得される。PPGセンサは波長約550nmの赤外光、赤色光、または緑色光を発するLEDを皮膚に照射し、その反射光の変化をフォトトランジスタを用いて取得することで、脈波を測定する。しかし、この性質から、ゆるく装着されている場合や，血管の少ない身体部位にセンサが装着されていると、正常な脈波データを収集できないという問題があります。そこで我々は、センサが異常な脈波データを検出した時に、センサを移動させて装着部位を調整するデバイスを提案します。提案するデバイスは自動的に位置を調整するため、ユーザが何らかの行動をする必要はありません．そのため，睡眠中などであっても適切な位置にセンサを装着し続けることができ，正しいデータを収集することが可能となります．PPGセンサの装着位置を移動するデバイスの有効性を確認するために評価実験を行った。プロトタイプデバイスを実装し、PPGセンサの装着位置を手動で移動した場合と、デバイスで移動した場合に、移動後に取得されるデータに差があるかどうか確認する評価実験を行った。その結果、手動で移動しても自動で移動しても取得されるデータに差分がなかったことから、デバイスを使用してPPGセンサを移動することは問題ないとわかった。
-  A clear and well-documented \LaTeX\ document is presented as an
-  article formatted for publication by ACM in a conference proceedings
-  or journal publication. Based on the ``acmart'' document class, this
-  article presents and explains many of the common variations, as well
-  as many of the formatting elements an author may use in the
-  preparation of the documentation of their work.
+ % ウェアラブルデバイスから取得される生体情報のうち、脈波データはPPGセンサを用いて取得される。PPGセンサは波長約550nmの赤外光、赤色光、または緑色光を発するLEDを皮膚に照射し、その反射光の変化をフォトトランジスタを用いて取得する．この反射光の変化量に基づいて脈波を測定する。しかし、この性質から、センサがゆるく身体に装着されている場合や，血管の少ない身体部位にセンサが装着されていると、正常な脈波データを収集できないという問題があります。そこで我々は、センサが異常な脈波データを検出した時に、センサを移動させて装着部位を調整するデバイスを提案します。提案するデバイスは自動的に位置を調整するため、ユーザが何らかの行動をする必要はありません．これにより、睡眠中のようなセンサの装着位置を調整できないような状況であっても，センサを適切な位置に装着することができ、正しいデータを収集することが可能となる。我々は提案するデバイスの有効性を確認するための評価実験を行った。プロトタイプ装置を実装し、PPGセンサーの取り付け位置を手動で移動させた後と、装置を使用して移動させた後のデータを収集した。収集したデータのピーク数とDTW距離を計算し，観察したところ，手動で移動してもデバイスを使って移動しても取得されるデータに差分がなかった．この結果から、デバイスを使用してPPGセンサを移動することによってデータに影響を与えることはないため，デバイスを使ってセンサの装着位置を適切に調整することは有効であると明らかになった。今後は，リアルタイムに脈波データをモニタリングし，異常値が検出された瞬間にセンサの装着位置を調整できるようなモータ制御アルゴリズムを実装していく予定である．
+  Pulse data is acquired using PPG sensor among the biometric information from wearable devices. The PPG sensor irradiates the skin with LEDs that emit infrared light, red light, or green light with a wavelength of around 550 nm and obtains changes in the reflected light using a phototransistor. The pulse data is measured based on the amount of change in this reflected light. However, due to this nature, normal pulse data cannot be collected if the sensor is worn loosely on the body or if the sensor is worn on a body part with few blood vessels. Therefore, we propose a device that adjusts the mounted position when it detects abnormal pulse data. Since the proposed device automatically adjusts the position, the user does not need to take any action. This allows the sensor to be mounted in the proper position and normal data to be collected even in situations where the sensor mounted position cannot be adjusted, such as during sleep. We conducted an evaluation experiment to validate the effectiveness of our proposed device. We implemented a prototype device and collected data after manually moving the PPG sensor mounted position and after moving it using the device. The number of peaks and DTW distance from the collected data were calculated and observed, and there was no difference in the data acquired whether the position was moved manually or with the device. The results showed that using the device to adjust the PPG sensor mounted position is effectiveness, since moving the sensor using the device does not affect the data. In the future, we plan to implement a motor control algorithm that monitors pulse data in real time and adjusts the sensor mounted position the time when abnormal value is detected.
 \end{abstract}
 
 %%
@@ -208,8 +203,7 @@
 %%
 %% Keywords. The author(s) should pick words that accurately describe
 %% the work being presented. Separate the keywords with commas.
-\keywords{Do, Not, Us, This, Code, Put, the, Correct, Terms, for,
-  Your, Paper}
+\keywords{pulse wave, heart rate, biometric information, PPG sensor, smartwatch}
 %% A "teaser" image appears between the author and affiliation
 %% information and the body of the document, and typically spans the
 %% page.
@@ -232,20 +226,20 @@
 
 % 1
 \section{Introduction}
-% スマートウォッチやリング型デバイスなど、さまざまな形のウェアラブルデバイスが普及しており、身体に関するバイタルデータを取得できるものも多い。バイタルデータのうち脈波、心拍数の取得には、光電式容積脈波記録センサ（PPG）\cite{ppg}が広く利用されています。今日のPPGセンサーは、Hertzmanが最初に導入したデバイスと同じ原理を用いています\cite{ppg_principle1, ppg_principle2}が、最新の機器を用いてより小型化されています。PPGセンサは波長約550nmの赤外光、赤色光、または緑色光を発するLEDを皮膚に照射します。動脈を流れる血液中の酸化ヘモグロビンは、これらの光を吸収します。このセンサは、心拍のタイミングで動脈血流量が増加すると反射光量が減少する性質を利用します。具体的には、フォトトランジスタを用いて反射光量の変化を取得し、脈波を測定します。ここで、脈波データは反射光の変化に関する数値データであり、脈波データに現れるピークを検出することで心拍数を測定します。\par
-Various forms of wearable devices, such as smartwatches and ring-type devices, are becoming popular, many of which can acquire vital data about the body. Among the vital data, the sensor that uses the measurement technique is called photoplethysmography (PPG) \cite{ppg} is widely used to acquire pulse wave and heart rate data. Today's PPG sensors use the same principle as the device originally introduced by Hertzman \cite{ppg_principle1, ppg_principle2}, but in a smaller size using modern equipment. The PPG sensor irradiates the skin with LEDs that emit infrared light, red light, or green light with a wavelength of around 550 nm. The oxidized hemoglobin in the blood flowing through arteries can absorb these lights. The pulse sensor takes advantage of the fact that the amount of reflected light decreases as the arterial blood flow increases with the timing of a heartbeat. Specifically, it uses a phototransistor to obtain changes in the amount of reflected light and measure the pulse wave. Here, the pulse wave data is numerical data on the changes in the reflected light, and the heart rate is measured by detecting the peaks that appear in the pulse wave data.\par
+% スマートウォッチやリング型デバイスなど、さまざまな形のウェアラブルデバイスが普及しており、生体情報を取得できるものも多い。生体情報のうち脈波、心拍数の取得には、光電式容積脈波記録センサ（PPG）\cite{ppg}が広く利用されています。今日のPPGセンサーは、Hertzmanが最初に導入したデバイスと同じ原理を用いています\cite{ppg_principle1, ppg_principle2}が、最新の機器を用いてより小型化されています。PPGセンサは波長約550nmの赤外光、赤色光、または緑色光を発するLEDを皮膚に照射します。動脈を流れる血液中の酸化ヘモグロビンは、これらの光を吸収します。このセンサは、心拍のタイミングで動脈血流量が増加すると反射光量が減少する性質を利用します。具体的には、フォトトランジスタを用いて反射光量の変化を取得し、脈波を測定します。ここで、脈波データは反射光の変化に関する数値データであり、脈波データに現れるピークを検出することで心拍数を測定します。\par
+Various forms of wearable devices, such as smartwatches and ring-type devices, are becoming popular, many of which can acquire biometric information. Among the biometric information, the sensor that uses the measurement technique is called photoplethysmography (PPG) \cite{ppg} is widely used to acquire pulse wave and heart rate data. Today's PPG sensors use the same principle as the device originally introduced by Hertzman \cite{ppg_principle1, ppg_principle2}, but in a smaller size using modern equipment. The PPG sensor irradiates the skin with LEDs that emit infrared light, red light, or green light with a wavelength of around 550 nm. The oxidized hemoglobin in the blood flowing through arteries can absorb these lights. The pulse sensor takes advantage of the fact that the amount of reflected light decreases as the arterial blood flow increases with the timing of a heartbeat. Specifically, it uses a phototransistor to obtain changes in the amount of reflected light and measure the pulse wave. Here, the pulse wave data is numerical data on the changes in the reflected light, and the heart rate is measured by detecting the peaks that appear in the pulse wave data.\par
 
 % PPGセンサはその性質から、ゆるく装着されている場合や，血管の少ない身体部位にセンサを装着すると正常な脈波データを収集できないという問題があります。この問題はPPGの仕組み上の限界であるため、適切にセンサを再装着させる以外のアプローチでは根本的な問題解決は難しいと考えています。脈波データのノイズ除去手法や欠損を補完する手法がいくつか提案されています。しかし、これらの方法は欠損データを推測して補完する方法であるため、データ収集で欠損が発生してしまう問題を解決していない。
 Due to their nature, PPG sensors have the problem of failing to collect normal pulse wave data if they are worn loosely or if the sensor is worn on a body part with few blood vessels. Since this problem is a limitation of the PPG mechanism, we believe that it is difficult to solve the fundamental problem by any approach other than properly reattaching the sensor. Several methods of denoise or complementing missing pulse data have been proposed. However, these methods do not solve the problem of missing data in data collection, since they are methods of guessing and complementing missing data.\par
 
 % センサから取得される生データの欠損を防ぐには、異常値が検出されたタイミングでセンサの装着位置を調整する必要があります。しかし一方で、ユーザが定期的に脈波データをモニタリングし続け，デバイスを再装着することは煩雑です。睡眠中などの状況下においては、そもそもこの解決策が使えません。そのため我々は、センサが異常な脈波データを検出した時に、センサを移動させて装着部位を調整するデバイスを提案します。提案するデバイスは自動的に位置を調整するため、ユーザが何らかの行動をする必要はありません．そのため，睡眠中などであっても適切な位置にセンサを装着し続けることができ，正しいデータを収集することが可能となります．
-To prevent loss of raw data acquired from the sensor, it is necessary to adjust the sensor's mounting position at the timing when abnormal values are detected. However, it is cumbersome for users to keep monitoring pulse wave data and reattach the device on a regular basis. In situations such as during sleep, this solution cannot be used in the first place. Therefore, we propose a device that moves the sensor and adjusts the wearing site when the sensor detects abnormal pulse wave data. Since the proposed device automatically adjusts the position, the user does not need to take any action. This allows the sensor to remain in the proper position even during sleep, thus enabling the collection of correct data.\par
+To prevent loss of raw data acquired from the sensor, it is necessary to adjust the sensor's mounting position at the timing when abnormal values are detected. However, it is cumbersome for users to keep monitoring pulse wave data and reattach the device on a regular basis. In situations such as during sleep, this solution cannot be used in the first place. Therefore, we propose a device that adjusts the mounted position when it detects abnormal pulse data. Since the proposed device automatically adjusts the position, the user does not need to take any action. This allows the sensor to remain in the proper position even during sleep, thus enabling the collection of correct data.\par
 
 % 脈波データの利用方法は多岐に渡る．脈波データを心拍数の識別以外に呼吸数の推定や感情を識別に利用する手法が研究されている．しかしながら，研究されている状態認識手法は正常な脈波データの使用を前提としているものも多い．そのため，我々は正常な脈波データを継続的に収集できるようになることは有意義であると考えている．
 PPG data is used in a wide variety of ways. The data is used to estimate respiratory rate and to recognize emotions, in addition to heart rate recognition. However, many of the proposed methods assume the use of normal pulse data. Therefore, we think that it would be beneficial to be able to continuously collect normal pulse data.\par
 
-% 本稿の残りの部分では、\ref{sec:related}セクションで関連研究を紹介します。次に、提案手法の詳細を\ref{sec:method}節で説明し、\ref{sec:evaluation}節で評価する。最後に、\ref{sec:limitation}節で本手法の限界について述べる。
-Section \ref{sec:related} introduces related works, section \ref{sec:method} describes the details of the proposed method, section \ref{sec:evaluation} presents our evaluation, and section \ref{sec:future_work} discusses future plans. We conclude in section \ref{sec:conclution} with a brief summary.
+% 本稿の残りの部分では、\ref{sec:related}セクションで関連研究を紹介します。次に、提案手法の詳細を\ref{sec:device}節で説明し、\ref{sec:evaluation}節で評価する。最後に、\ref{sec:limitation}節で本手法の限界について述べる。
+Section \ref{sec:related} introduces related works, section \ref{sec:device} describes the details of the proposed device, section \ref{sec:evaluation} presents our evaluation, and section \ref{sec:future_work} discusses future plans. We conclude in section \ref{sec:conclution} with a brief summary.
 
 
 
@@ -316,12 +310,12 @@ There have been several methods to process raw PPG data after acquisition and re
 
 
 % 3
-\section{Proposed Method}
-\label{sec:method}
-This section describes the details of the proposed method.
+\section{Proposed Device}
+\label{sec:device}
+This section describes the details of the proposed device.
 
 % 3.1
-\subsection{Overview}
+\subsection{Process Flow}
 % 提案システムの処理の流れを図\figref{method}に示す．システムはリアルタイムにPPG生データをもとに，それが正常な波形か異常な波形かを判定し，その判定結果に基づきセンサの装着位置を移動する．まず，アームバンドに装着されたPPGセンサから取得されたデータを識別モデルに投入する．使用する識別モデルは，事前に正常な脈波データを学習させた，異常な脈波データを検知できるモデルである．このモデルはPPGデータを入力とし，それが異常値である生起確率を出力する．ここで異常な波形であると判断された場合，モータを作動させる．モータはアームバンドに接続されており，モータが回転するとセンサの位置が移動する．移動が完了したら，次に取得されたPPGが再び識別モデルに投入される．一方，正常な波形であると判断された場合，モータは作動せずに次のPPG取得が行われる．
 The process flow of the proposed system is shown in \figref{system}. The system determines whether the waveform is normal or abnormal in real-time based on the raw PPG data, and moves the position of the sensor based on the result of the recognition. First, the data acquired from the PPG sensor attached to the armband is fed into a recognition model. This model which is trained with normal pulse wave data in advance can detect abnormal pulse wave data. The model is inputted PPG data and outputs the probability of abnormal values. If the model recognize that the waveform is abnormal, the motor is activated. The motor is connected to the armband. As the motor rotates, the position of the sensor moves. Once the movement is completed, the next acquired PPG is fed into the recognition model. If the waveform is judged to be normal, the motor is not activated and the next PPG acquisition is performed.
 
@@ -334,7 +328,7 @@ The process flow of the proposed system is shown in \figref{system}. The system 
 
 
 % 3.2
-\subsection{Device}
+\subsection{Device Design}
 % デバイスを図\figref{device}に、装着した状態を図\figref{waring}に示す。デバイスは駆動部分、制御部分から構成されている。制御部分はモータ、タイミングプーリ、アイドラープーリ、歯付ベルト、PPGセンサが含まれる。制御部分はArduino Uno R3とモータドライバとしてL298Nモジュールを使用している。なお、外部電源はDC12V/1Aを使用している。PPGセンサのデータはArduinoのAnalog A0ピンから取得され、シリアル通信でラップトップへ送られる。ラップトップ上で事前学習された識別モデルへPPGデータを投入し、その識別結果によりモータを作動させる。モータはArduinoのDigital 2, 3ピンにそれぞれHIGH (5V), LOW (0V)の電圧をかけることで作動する。逆電位を設定すると逆方向に回転し、両方のピンをHIGHと設定すると回転にブレーキがかかる。
 The device and the mounted state is shown in \figref{device} and \figref{waring}. This consists of a driving unit and a controling unit. The driving unit includes a motor, driving pulley, idler pulley, toothed belt, and PPG sensor. The controling unit includes Arduino Uno R3 microcomputer and L298N module as motor driver. The data from the PPG sensor is obtained from Analog A0 pin on the Arduino and sent to the laptop via serial communication. The PPG data is fed into a pre-trained recognition model on the laptop, and the motor is activated based on the recognition result. The motor is rotate by applying HIGH (5V) and LOW (0V) voltage to the Digital 2 and 3 pins on the Arduino, respectively. Setting the reverse potential will cause the motor to rotate in the opposite direction, and setting both pins HIGH will apply a brake.
 
@@ -347,7 +341,7 @@ The device and the mounted state is shown in \figref{device} and \figref{waring}
 
 \begin{figure}[!t]
   \centering
-  \includegraphics[width=0.6\linewidth]{figures/waring.eps}
+  \includegraphics[width=0.8\linewidth]{figures/waring.eps}
   \caption{The device is worn on the arm.}
   \label{fig:waring}
 \end{figure}
@@ -367,8 +361,8 @@ The data was collected with the PPG sensor worn on the left wrist area (around w
 
 \begin{figure}[!t]
   \centering
-  \includegraphics[width=0.7\linewidth]{figures/position.eps}
-  \caption{Mounting position of the sensor.}
+  \includegraphics[width=0.8\linewidth]{figures/position.eps}
+  \caption{Mounting position of the sensor at the evaluation experiments.}
   \label{fig:position}
 \end{figure}
 
@@ -381,8 +375,8 @@ The first 5 seconds of the collected data were discarded as a calibration period
 
 % 4.3
 \subsection{Results and Discussion}
-% PPGセンサは装着位置により取得されるデータが変化するほか、心拍数は常に変化しているため、同じ日に収集したとしても全く同じ波形のデータを取得することはできない。そのため、通常の装着とデバイス上での装着の場合で、腕と指先の脈波の差が変化するかどうかを確認する。
-The PPG sensor cannot acquire exactly the same data even if it is collected on the same day, because the data acquired varies depending on the wearing position and the heart rate is constantly changing. Therefore, we evaluated whether the difference in waveform between the arm and finger changes when the sensor is worn normally and over the device.\par
+% PPGセンサは装着位置により取得されるデータが変化するほか、心拍数は常に変化しているため、同じ日に収集したとしても全く同じ波形のデータを取得することはできない。そのため、バンドを使った装着とデバイス上での装着の場合で、腕と指先の脈波の差が変化するかどうかを確認する。
+The PPG sensor cannot acquire exactly the same data even if it is collected on the same day, because the data acquired varies depending on the wearing position and the heart rate is constantly changing. Therefore, we evaluated whether the difference in waveform between the arm and finger changes when the sensor is worn with a band and over the device.\par
 
 % 収集されたPPGデータの波形を図\figref{manual}、図\figref{auto}に示す。検出されたピークは点で示されている。波形から、指先から取得されたデータに比べて、腕から取得されたデータは振幅が小さく特徴が見えにくいことがわかる。しかしながら、これはデバイス上のPPGセンサからのデータだけでなく、通常の装着をしたセンサからのデータでも同じ結果であるため、本デバイスによる影響ではないことがわかる。我々は指先に比べて腕は皮膚が厚く、血管が浮き出ていないため、フォトリフレクタが反射光を十分に捉えられなかったことが影響したと考えている。
 The waveform of collected PPG data are shown in \figref{manual} and \figref{auto}. The detected peaks are indicated by dots. It can be seen that the data acquired from the arm has smaller amplitudes and features are less visible compared to the data acquired from the finger. However, this is not an effect of this device, since this result is the same not only for the data from the PPG sensor on the device, but also for the data from the sensor with normal wear. We think that this result is due to the fact that the skin of the arm is thicker than that of the fingertips, which means that the blood vessels do not appear, and the phototransistor did not capture enough reflected light.\par
@@ -396,21 +390,21 @@ The results indicate that there is no difference in the data acquired when the P
 \begin{figure*}[!t]
   \centering
   \includegraphics[width=1\linewidth]{figures/manual.eps}
-  \caption{Confusion matrix in bottle estimation.}
+  \caption{The raw PPG data when the sensor is worn with a band and the mounted position is manually moved.}
   \label{fig:manual}
 \end{figure*}
 
 \begin{figure*}[!t]
   \centering
   \includegraphics[width=1\linewidth]{figures/auto.eps}
-  \caption{Change in loss during training phase of bottle estimation model.}
+  \caption{The raw PPG data when the sensor is worn over the device and the mounted position is moved by device.}
   \label{fig:auto}
 \end{figure*}
 
 \begin{table}[!t]
   \small
   \centering
-  \caption{Number of peaks and DTW distance in PPG data when the sensor is worn normally.}
+  \caption{Number of peaks and DTW distance in PPG data when the sensor is worn with a band.}
   \begin{tabular}{c|c|cc|c} \hline\hline
     \multirow{2}{*}{\#} & \multirow{2}{*}{Position} & \multicolumn{2}{c|}{Peaks} & \multirow{2}{*}{DTW distance} \\ \cline{3-4}
      &                   & Arm & Finger & \\ \hline
@@ -451,8 +445,8 @@ In addition, current devices are large in size. The sensor moves in a straight l
 % 6
 \section{Conclusion}
 \label{sec:conclution}
-% 本論文では、センサが異常な脈波データを検出した時に、センサを移動させて装着部位を調整するデバイスを提案しました。
-% In this paper, we proposed a method to estimate the water level in a container by acquiring the sound of water pouring, assuming a device attached to a faucet, so that the water level can be correctly determined even in a container whose internal conditions are difficult to grasp. We implemented several estimation models and conducted experiments to evaluate the estimation accuracy using five bottles. The results showed that the bottle estimation model had an average accuracy of 0.642, the water level estimation model had respective averages of 0.462 and 0.308 for the bottle-dependent and bottle-independent models, and the overflow detection model had respective averages of 0.83 and 0.744 for the bottle-dependent and bottle-independent models. These results indicate that, while the accuracy of the water level estimation needs to be improved, overflow detection can be achieved regardless of the container type and may be used in natural environments. In the future, we plan to improve the model for better estimation accuracy and to implement a faucet-mounted device that incorporates a function to stop water injection just before it becomes full.
+% 本論文では、センサが異常な脈波データを検出した時に、センサを移動させてセンサの装着部位を調整するデバイスを提案しました。我々はプロトタイプデバイスを実装し，デバイス上のPPGセンサから収集されたデータについて，正しさの評価実験を行った．我々は，バンドを使って腕にセンサ装着して手動で装着位置を調整したあとのデータと，デバイスを使ってセンサの装着位置を腕の上で調整したあとのデータを収集した．また，正常な脈波データとして同時刻の指先の脈波データも収集した．我々は腕と指先から収集されたデータのピーク数および，DTW距離を計算した．その結果，デバイスを使って位置を調整した場合であっても，正常なデータを取得できていることが明らかになった．今後は、PPGデータが正常な波形か異常な波形かを識別するモデルを構築し，本論文にて実装したプロトタイプデバイスのモータ制御に組み込んでいく。
+In this paper, we proposed a device that moves the sensor and adjusts the sensor attachment point when the sensor detects abnormal pulse data. We implemented the prototype device and conducted evaluation experiments on the data collected from the PPG sensor on the device. We collected data after the sensor was worn on the arm using a band and the wearing position was adjusted manually, and after the wearing position was adjusted on the arm using the device. We also collected data from the finger as normal data at the same time. We calculated the number of peaks and DTW distances for the data collected from the arm and finger. The results showed that normal data was obtained even when the sensor mounted position was adjusted using the device. In the future, we will build a model to recognize whether PPG data is normal or abnormal waveform and incorporate it into the motor control of the prototype device implemented in this paper.
 
 %%
 %% The acknowledgments section is defined using the "acks" environment
